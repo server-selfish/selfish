@@ -7,6 +7,7 @@
 [Quickstart](#quickstart) • [GitHub auth](#github-auth-setup) • [Configuration](#configuration) • [Scripts](#scripts) • [Services](#services) • [Troubleshooting](#troubleshooting)
 
 </div>
+
 > [!Note]
 > Current HEAD references only support for go tech stack. later will add more diverse other techs
 
