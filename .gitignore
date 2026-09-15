@@ -1,0 +1,5 @@
+.secret
+config.yaml
+cert
+valkey.acl
+.env
