@@ -1,0 +1,49 @@
+# this is the single source of truth for configuration.
+# to make it easier to config and not hardcoded, always put the variable here
+# and call it using viper in your app
+
+# for production, copy this file and change the name to config.yaml
+# for test, copy this file and change the name to config.test.yaml
+
+app:
+  base:
+    url: "https://localhost/api"
+  http:
+    port: 8081
+
+database:
+  sql:
+    protocol: ""
+    host: ""
+    user: ""
+    password: ""
+    port: ""
+    name: ""
+    sslmode: "disable"
+
+valkey:
+  address: ""
+  port: ""
+  username: ""
+  password: ""
+
+prometheus:
+  url: ""
+
+server:
+  cors:
+    allow:
+      origins: "*"
+      methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH"
+      headers: "Content-Type,Authorization,X-Requested-With,X-CSRF-Token,Accept,Origin,Cache-Control,X-File-Name,X-File-Type,X-File-Size"
+      credential: true
+    expose:
+      headers: "Content-Length,Content-Range"
+    max:
+      age: 86400
+
+auth:
+  jwt:
+    issuer: ""
+    access_token_ttl_minutes: 15
+    refresh_token_ttl_days: 7

@@ -1,0 +1,12 @@
+services:
+  selfish-frontend:
+    image: ghcr.io/server-selfish/frontend:latest
+    container_name: selfish-frontend
+    environment:
+      HOST: "0.0.0.0"
+      PORT: ${FRONTEND_PORT:-}
+      BASE_URL_BACKEND_ENDPOINT: ${BASE_URL_BACKEND_ENDPOINT:-}
+      NODE_TLS_REJECT_UNAUTHORIZED: ${NODE_TLS_REJECT_UNAUTHORIZED:-}
+    restart: unless-stopped
+    networks:
+      - selfish-network
