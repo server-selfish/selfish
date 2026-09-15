@@ -1,12 +1,4 @@
-services:
-  selfish-gateway:
-    image: nginx:1.28.0-alpine-slim
-    container_name: selfish-gateway
-    # ports:
-    #   - "8081:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./cert/server.crt:/etc/nginx/ssl/server.crt
-      - ./cert/server.key:/etc/nginx/ssl/server.key
-    restart: unless-stopped
-    network_mode: "host"
+name: selfish
+
+networks:
+  selfish-network:
