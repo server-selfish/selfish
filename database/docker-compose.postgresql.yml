@@ -1,0 +1,21 @@
+services:
+  selfish_db:
+    image: postgres:18.3-alpine3.23
+    container_name: selfish_db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    volumes:
+      - selfish_db_data:/var/lib/postgresql
+    networks:
+      - selfish-network
+volumes:
+  selfish_db_data: {}

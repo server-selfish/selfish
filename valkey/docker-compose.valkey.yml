@@ -1,0 +1,14 @@
+services:
+  selfish_cache:
+    image: valkey/valkey-bundle:9-alpine
+    container_name: selfish_cache
+    volumes:
+      - selfish_valkey_data:/data
+      - ./valkey/valkey.acl:/etc/valkey/valkey.acl:ro
+    restart: unless-stopped
+    command: ["valkey-server", "--aclfile", "/etc/valkey/valkey.acl"]
+    networks:
+      - selfish-network
+
+volumes:
+  selfish_valkey_data: {}

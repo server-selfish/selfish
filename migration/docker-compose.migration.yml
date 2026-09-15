@@ -1,0 +1,43 @@
+services:
+  selfish-migrate:
+    image: migrate/migrate:v4.18.2
+    container_name: selfish-migrate
+    depends_on:
+      selfish_db:
+        condition: service_healthy
+    networks:
+      - selfish-network
+    environment:
+      # Single source for migrate -database. Pass via .env/shell; defaults compose from DB_* to match database/docker-compose.postgresql.yml
+      - DATABASE_URL=${DATABASE_URL:-postgres://${DB_USER:-myusername}:${DB_PASSWORD:-password}@selfish_db:5432/${DB_NAME:-selfish}?sslmode=disable}
+      - MIGRATIONS_GIT_REF=${MIGRATIONS_GIT_REF:-main}
+    entrypoint: ["/bin/sh", "-c"]
+    # Runtime fetch from https://github.com/server-selfish/backend/tree/main/migrations
+    # so no vendored copy needed. Uses curl+tar (faster than git sparse-checkout, verbose).
+    command:
+      - |
+        set -ex
+        echo "==> fetching migrations from server-selfish/backend@$${MIGRATIONS_GIT_REF}..."
+        echo "==> DB host: $$(echo "$${DATABASE_URL}" | sed -E 's|.*@([^:/?]+).*|\1|') ref: $${MIGRATIONS_GIT_REF}"
+        # ensure deps (migrate image is alpine) - verbose, not silenced
+        if command -v apk >/dev/null 2>&1; then
+          apk add --no-cache ca-certificates curl tar
+        elif command -v apt-get >/dev/null 2>&1; then
+          apt-get update && apt-get install -y ca-certificates curl tar
+        fi
+        rm -rf /tmp/be /tmp/be.tar.gz /tmp/backend-*
+        echo "==> downloading https://github.com/server-selfish/backend/archive/$${MIGRATIONS_GIT_REF}.tar.gz ..."
+        curl -fSL --progress-bar "https://github.com/server-selfish/backend/archive/$${MIGRATIONS_GIT_REF}.tar.gz" -o /tmp/be.tar.gz
+        echo "==> extracting /tmp/be.tar.gz ..."
+        tar -xzf /tmp/be.tar.gz -C /tmp
+        mv /tmp/backend-* /tmp/be
+        echo "==> migrations list:"
+        ls -lh /tmp/be/migrations/
+        echo "==> running migrate up with -path=/tmp/be/migrations (verbose) ..."
+        UP_RC=0
+        migrate -path=/tmp/be/migrations -database="$${DATABASE_URL}" -verbose up || UP_RC=$$?
+        echo "==> migrate up exit: $${UP_RC}"
+        echo "==> current migrate version:"
+        migrate -path=/tmp/be/migrations -database="$${DATABASE_URL}" version || true
+        exit $${UP_RC}
+    restart: "no"

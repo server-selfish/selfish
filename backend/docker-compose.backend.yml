@@ -1,0 +1,22 @@
+services:
+  selfish-backend:
+    image: ghcr.io/server-selfish/backend:latest
+    container_name: selfish-backend
+    restart: unless-stopped
+    depends_on:
+      - selfish_db
+      - selfish_cache
+    volumes:
+      - ./backend/config.yaml:/config.yaml:ro
+      - ./backend/.secret:/.secret:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ENV=${BACKEND_ENV:-}
+      - AUTH_GITHUB_CLIENT_ID=${AUTH_GITHUB_CLIENT_ID:-}
+      - AUTH_GITHUB_CLIENT_SECRET=${AUTH_GITHUB_CLIENT_SECRET:-}
+      - AUTH_GITHUB_APP_ID=${AUTH_GITHUB_APP_ID:-}
+      - AUTH_GITHUB_APP_SLUG=${AUTH_GITHUB_APP_SLUG:-}
+      - AUTH_GITHUB_PRIVATE_KEY_PATH=${AUTH_GITHUB_PRIVATE_KEY_PATH:-}
+      - AUTH_JWT_SECRET=${AUTH_JWT_SECRET:-}
+    networks:
+      - selfish-network
