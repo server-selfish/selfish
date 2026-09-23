@@ -8,6 +8,9 @@
 
 </div>
 
+> [!Note]
+> Current HEAD references only support for go tech stack. later will add more diverse other techs
+
 Selfish ships as three apps plus managed infrastructure, all wired together with Docker Compose:
 
 | Component | Tech | Source |
