@@ -9,6 +9,8 @@ services:
     volumes:
       - selfish_logs_data:/vlogs
     restart: unless-stopped
+    networks:
+      - selfish-network
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:9428"]
       interval: 30s

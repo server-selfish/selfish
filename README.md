@@ -180,18 +180,11 @@ Every stack shares the `selfish-network` bridge network and is pinned to an expl
 | `selfish-gateway` | `nginx:1.28.0-alpine-slim` | Host `8080` → container `443` |
 | `selfish-migrate` | `migrate/migrate:v4.18.2` | One-shot (`restart: "no"`); downloads `migrations/` from `server-selfish/backend@<ref>` and runs `up`, then prints the current version |
 | `selfish_prometheus`, `selfish_cadvisor` | `prom/prometheus:v3.12.0-distroless`, `gcr.io/cadvisor/cadvisor:v0.54.1` | Scrape config in `prometheus/prometheus.yml` |
-| `selfish_logs` | `victoriametrics/victoria-logs:v1.50.0` | Defined in `vlogs/`; run it manually (see below), port `9428` |
+| `selfish_logs` | `victoriametrics/victoria-logs:v1.50.0` | Included in default `bin/` runs via `vlogs/`, port `9428` |
 
-### Logs stack (optional)
+### Logs stack
 
-`vlogs/docker-compose.vlogs.yml` is not part of the default `bin/` runs. Start it alongside the rest when needed:
-
-```bash
-docker compose --env-file .env \
-  -f docker-compose.yml \
-  -f vlogs/docker-compose.vlogs.yml \
-  up -d
-```
+`vlogs/docker-compose.vlogs.yml` is part of default `bin/` runs through `bin/common.sh`. `selfish-backend` exports OTLP/HTTP logs to `http://selfish_logs:9428/insert/opentelemetry/v1/logs`. `start.sh` runs migrate after boot. `start-no-migrate.sh` skips migrate with `--scale selfish-migrate=0` but still starts logs store.
 
 ## Project structure
 
@@ -205,7 +198,7 @@ docker compose --env-file .env \
 ├── valkey/                 # valkey compose fragment + ACL
 ├── migration/              # one-shot migrate compose fragment
 ├── prometheus/             # prometheus + cadvisor fragments and config
-├── vlogs/                  # victoria-logs fragment (optional, manual)
+├── vlogs/                  # victoria-logs fragment (included by default)
 ├── docker-compose.yml      # project name + shared network
 └── .env                    # your secrets (gitignored, copy from .env.example)
 ```

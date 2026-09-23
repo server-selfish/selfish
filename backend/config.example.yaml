@@ -30,6 +30,22 @@ valkey:
 prometheus:
   url: ""
 
+log:
+  level: "info"
+  stdout:
+    enabled: true
+    pretty: true
+
+otel:
+  logs:
+    enabled: true
+    # VictoriaLogs serves OTLP ingestion at this exact path.
+    endpoint: "http://localhost:9428/opentelemetry/api/v1/logs"
+    insecure: true
+  service:
+    name: "selfish-backend"
+    version: "dev"
+
 server:
   cors:
     allow:

@@ -25,4 +25,5 @@ COMPOSE="docker compose --env-file .env \
   -f frontend/docker-compose.frontend.yml \
   -f gateway/docker-compose.nginx.yml \
   -f prometheus/docker-compose.prometheus.yml \
+  -f vlogs/docker-compose.vlogs.yml \
   -f migration/docker-compose.migration.yml"

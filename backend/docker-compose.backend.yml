@@ -6,6 +6,7 @@ services:
     depends_on:
       - selfish_db
       - selfish_cache
+      - selfish_logs
     volumes:
       - ./backend/config.yaml:/config.yaml:ro
       - ./backend/.secret:/.secret:ro
@@ -18,5 +19,10 @@ services:
       - AUTH_GITHUB_APP_SLUG=${AUTH_GITHUB_APP_SLUG:-}
       - AUTH_GITHUB_PRIVATE_KEY_PATH=${AUTH_GITHUB_PRIVATE_KEY_PATH:-}
       - AUTH_JWT_SECRET=${AUTH_JWT_SECRET:-}
+      - OTEL_LOGS_ENABLED=${OTEL_LOGS_ENABLED:-true}
+      - OTEL_LOGS_ENDPOINT=${OTEL_LOGS_ENDPOINT:-http://selfish_logs:9428/insert/opentelemetry/v1/logs}
+      - OTEL_LOGS_INSECURE=${OTEL_LOGS_INSECURE:-true}
+      - OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME:-selfish-backend}
+      - OTEL_SERVICE_VERSION=${OTEL_SERVICE_VERSION:-prod}
     networks:
       - selfish-network
